@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import './landing.css';
+import { useNavigate } from 'react-router-dom';
 
 const Landing = () => {
     const [userId, setUserId] = useState("");
+
+    const navigate = useNavigate();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,30 +21,26 @@ const Landing = () => {
         try {
             const response = await fetch(`http://localhost:8080/save?${params.toString()}`);
             const data = await response.json();
+            const userid = data.id;
+            alert(`user saved successfully with id ${userid}`)
             console.log("Saved user:", data);
         } catch (err) {
+            alert(`An Error while saving user data`)
             console.error("Error in saving user", err);
         }
     };
 
     const handleFindById = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/get/${userId}`);
-            const data = await response.json();
-            console.log("User found:", data);
-        } catch (err) {
-            console.error("Error fetching user by ID", err);
-        }
+      if(userId.trim()){
+        navigate(`/display/${userId}`)
+      }
+      else{
+        alert(`Invalid id`)
+      }
     };
 
     const handleGetAllUsers = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/allusers`);
-            const data = await response.json();
-            console.log("All users:", data);
-        } catch (err) {
-            console.error("Error fetching all users", err);
-        }
+      navigate(`/display`)
     };
 
     return (
@@ -58,7 +58,7 @@ const Landing = () => {
                     <input type="text" name="phone" id="phone" />
 
                     <label htmlFor="password">Password:</label>
-                    <input type="text" name="password" id="password" />
+                    <input type="text" name="password" id="password" /><br />
 
                     <button type="submit">Register</button>
                 </form>
